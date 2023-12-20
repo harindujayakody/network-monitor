@@ -1,2 +1,4 @@
 @echo off
-pythonw.exe "./network_speed_monitor.py"
+title Network Monitor
+python network_speed_monitor.py
+pause
