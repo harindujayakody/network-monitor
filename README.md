@@ -2,6 +2,8 @@
 
 ![Network Monitor](https://github.com/harindujayakody/network-monitor/assets/9878813/446c3b9a-543e-4c6e-a28e-341a611f3973)
 
+(https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white)
+
 ## Overview
 
 This Python program serves as a simple yet effective network monitor, providing real-time information about data usage and network speeds. It calculates and displays total upload and download data in megabytes, along with current upload and download speeds in kilobits per second (Kbps) and megabits per second (Mbps), respectively.
