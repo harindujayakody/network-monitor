@@ -23,11 +23,7 @@ This Python program serves as a simple yet effective network monitor, providing 
    ```bash
    python network_monitor.py
    ```
-
-## Screenshots
-
-Include screenshots of the program in action. You can create a folder named `screenshots` in your repository and add images to it.
-
+   
 ## Author
 
 - **Harindu Jayakody**
