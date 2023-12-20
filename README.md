@@ -2,7 +2,7 @@
 
 ![Network Monitor](https://github.com/harindujayakody/network-monitor/assets/9878813/446c3b9a-543e-4c6e-a28e-341a611f3973)
 
-![Python3](https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white) ![Love]http://ForTheBadge.com/images/badges/built-with-love.svg)
+![Python3](https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white) ![Love](http://ForTheBadge.com/images/badges/built-with-love.svg)
 
 ## Overview
 
