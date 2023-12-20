@@ -4,6 +4,7 @@ import time
 import pyfiglet
 
 LOG_FILE = "data_usage_log.txt"
+TOTALS_FILE = "data_totals.txt"
 
 def get_network_stats(interval=1):
     network_stats1 = psutil.net_io_counters()
@@ -32,23 +33,28 @@ def read_last_session_totals():
     total_upload = 0
     total_download = 0
 
-    if os.path.exists(LOG_FILE):
-        with open(LOG_FILE, "r") as log_file:
-            lines = log_file.readlines()
+    if os.path.exists(TOTALS_FILE):
+        with open(TOTALS_FILE, "r") as totals_file:
+            lines = totals_file.readlines()
             if lines:
                 last_line = lines[-1]
                 parts = last_line.split(',')
                 if len(parts) >= 2:
-                    total_upload_str = parts[0].split(':')[-1].strip().replace('MB', '')
-                    total_download_str = parts[1].split(':')[-1].strip().replace('MB', '')
+                    total_upload_str = parts[0].split(':')[-1].strip()
+                    total_download_str = parts[1].split(':')[-1].strip()
 
                     try:
-                        total_upload = float(total_upload_str)
-                        total_download = float(total_download_str)
+                        total_upload = float(total_upload_str) if total_upload_str.replace('.', '').isdigit() else 0
+                        total_download = float(total_download_str) if total_download_str.replace('.', '').isdigit() else 0
                     except ValueError as e:
                         print(f"Error converting values to float: {e}")
 
     return total_upload, total_download
+
+def save_totals(total_upload, total_download):
+    with open(TOTALS_FILE, "a") as totals_file:
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        totals_file.write(f"{timestamp} - Upload: {total_upload:.2f} MB, Download: {total_download:.2f} MB\n")
 
 def reset_totals_if_new_day(last_reset_time, current_time):
     last_reset_date = time.strftime("%Y-%m-%d", time.localtime(last_reset_time))
@@ -59,18 +65,21 @@ def reset_totals_if_new_day(last_reset_time, current_time):
 def reset_totals():
     return 0, 0
 
-def log_data(total_upload, total_download, last_log_time):
-    current_time = time.time()
-    if current_time - last_log_time >= 3600:  # Log every 1 hour (3600 seconds)
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-        log_entry = f"{timestamp} - Upload: {total_upload:.2f} MB, Download: {total_download:.2f} MB\n"
+def save_data_usage(total_upload, total_download):
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    with open(LOG_FILE, "a") as log_file:
+        log_file.write(f"{timestamp} - Total Upload: {total_upload:.2f} MB, Total Download: {total_download:.2f} MB\n")
 
-        with open(LOG_FILE, "a") as log_file:
-            log_file.write(log_entry)
-
-        return current_time  # Update last log time
-
-    return last_log_time
+def display_last_closed_totals():
+    print("\nLast Closed Totals:")
+    if os.path.exists(LOG_FILE):
+        with open(LOG_FILE, "r") as log_file:
+            lines = log_file.readlines()
+            if lines:
+                last_line = lines[-1]
+                print(last_line.strip())
+    else:
+        print("No recorded totals found.")
 
 if __name__ == "__main__":
     interval = 1  # Measurement interval in seconds
@@ -80,6 +89,9 @@ if __name__ == "__main__":
     last_log_time = time.time()
 
     try:
+        # Display last closed totals when the program starts
+        display_last_closed_totals()
+
         while True:
             current_time = time.time()
 
@@ -109,12 +121,16 @@ if __name__ == "__main__":
                 print(f"GitHub: {styled_text('https://github.com/harindujayakody/network-monitor', '1;36;40')}")
                 print("\nPress Ctrl+C to exit gracefully.")
 
-                # Log data
-                last_log_time = log_data(total_upload, total_download, last_log_time)
+                # Save totals every hour
+                if current_time - last_log_time >= 3600:  # Log every 1 hour (3600 seconds)
+                    save_totals(total_upload, total_download)
+                    last_log_time = current_time
 
                 last_update_time = current_time
 
             time.sleep(1)
 
     except KeyboardInterrupt:
+        # Save data usage when the program is closed
+        save_data_usage(total_upload, total_download)
         print(styled_text("\nExiting...", "1;31;40"))
