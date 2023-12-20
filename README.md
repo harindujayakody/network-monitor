@@ -2,7 +2,11 @@
 
 ![Network Monitor](https://github.com/harindujayakody/network-monitor/assets/9878813/446c3b9a-543e-4c6e-a28e-341a611f3973)
 
-![python](https://img.shields.io/github/stars/harindujayakody/network-monitor.svg)
+![follow](https://img.shields.io/github/followers/harindujayakody.svg?style=social&label=Follow&maxAge=2592000)
+![stars](https://img.shields.io/github/stars/harindujayakody/network-monitor.svg)
+![issues](https://img.shields.io/github/issues/harindujayakody/network-monitor.svg)
+![pr](https://img.shields.io/github/issues-pr/harindujayakody/network-monitor.svg)
+
 ## Overview
 
 This Python program serves as a simple yet effective network monitor, providing real-time information about data usage and network speeds. It calculates and displays total upload and download data in megabytes, along with current upload and download speeds in kilobits per second (Kbps) and megabits per second (Mbps), respectively.
@@ -35,5 +39,4 @@ This project is licensed under the [MIT License](LICENSE.md).
 
 ---
 
-**Made with ❤️ by Harindu Jayakody**
 ![Python3](http://ForTheBadge.com/images/badges/made-with-python.svg) 
