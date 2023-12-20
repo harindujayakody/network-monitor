@@ -23,11 +23,6 @@ This Python program serves as a simple yet effective network monitor, providing 
    ```bash
    python network_monitor.py
    ```
-   
-## Author
-
-- **Harindu Jayakody**
-  - GitHub: [harindujayakody](https://github.com/harindujayakody)
 
 ## Contributions
 
