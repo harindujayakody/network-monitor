@@ -17,7 +17,7 @@ def get_network_stats(interval=1):
     return bytes_sent, bytes_received
 
 def calculate_network_speed(bytes_sent, bytes_received, interval):
-    upload_speed = (bytes_sent * 8) / (interval * 1024)  # Kbps
+    upload_speed = (bytes_sent * 8) / (interval * 1024 * 1024)  # Mibps
     download_speed = (bytes_received * 8) / (interval * 1024 * 1024)  # Mbps
 
     return upload_speed, download_speed
@@ -84,7 +84,8 @@ def display_last_closed_totals():
 if __name__ == "__main__":
     interval = 1  # Measurement interval in seconds
     total_upload, total_download = read_last_session_totals()
-    last_update_time = time.time()
+    last_update_time = time.monotonic()
+    previous_stats = psutil.net_io_counters()
     last_reset_time = time.time()
     last_log_time = time.time()
 
@@ -100,9 +101,14 @@ if __name__ == "__main__":
                 last_reset_time = current_time
                 total_upload, total_download = reset_totals()
 
-            if current_time - last_update_time >= interval:
-                bytes_sent, bytes_received = get_network_stats(interval)
-                upload_speed, download_speed = calculate_network_speed(bytes_sent, bytes_received, interval)
+            now = time.monotonic()
+            if now - last_update_time >= interval:
+                stats = psutil.net_io_counters()
+                elapsed = now - last_update_time
+                bytes_sent = max(0, stats.bytes_sent - previous_stats.bytes_sent)
+                bytes_received = max(0, stats.bytes_recv - previous_stats.bytes_recv)
+                previous_stats = stats
+                upload_speed, download_speed = calculate_network_speed(bytes_sent, bytes_received, elapsed)
 
                 total_upload += bytes_sent / 1024 / 1024  # Update total upload in MB
                 total_download += bytes_received / 1024 / 1024  # Update total download in MB
@@ -115,8 +121,8 @@ if __name__ == "__main__":
                 print(f"\n{styled_text('Network Usage:', '1;32;40')}\n")
                 print(f"Total Upload: {styled_text(f'{total_upload:.2f} MB', '1;34;40')}")
                 print(f"Total Download: {styled_text(f'{total_download:.2f} MB', '1;34;40')}")
-                print(f"Current Upload Speed: {styled_text(f'{upload_speed:.2f} Kbps', '1;33;40')}")
-                print(f"Current Download Speed: {styled_text(f'{download_speed:.2f} Mbps', '1;33;40')}")
+                print(f"Current Upload Speed: {styled_text(f'{upload_speed:.2f} Mibps', '1;33;40')}")
+                print(f"Current Download Speed: {styled_text(f'{download_speed:.2f} Mibps', '1;33;40')}")
                 print(f"\nMade with ❤️ by {styled_text('Harindu Jayakody', '1;35;40')}")
                 print(f"GitHub: {styled_text('https://github.com/harindujayakody/network-monitor', '1;36;40')}")
                 print("\nPress Ctrl+C to exit gracefully.")
@@ -126,7 +132,7 @@ if __name__ == "__main__":
                     save_totals(total_upload, total_download)
                     last_log_time = current_time
 
-                last_update_time = current_time
+                last_update_time = now
 
             time.sleep(1)
 
@@ -134,3 +140,4 @@ if __name__ == "__main__":
         # Save data usage when the program is closed
         save_data_usage(total_upload, total_download)
         print(styled_text("\nExiting...", "1;31;40"))
+
