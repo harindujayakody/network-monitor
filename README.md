@@ -9,13 +9,14 @@
 
 ## Overview
 
-This Python program serves as a simple yet effective network monitor, providing real-time information about data usage and network speeds. It calculates and displays total upload and download data in megabytes, along with current upload and download speeds in kilobits per second (Kbps) and megabits per second (Mbps), respectively.
+This Python program serves as a simple yet effective network monitor, providing real-time information about data usage and network speeds. It calculates and displays total upload and download data in megabytes, along with current upload and download speeds, both in megabits per second (Mibps).
 
 ## Features
 
 - **Real-time Monitoring:** Continuously monitors network usage and updates statistics at a specified interval.
 - **Clear Console Display:** Utilizes the `psutil` and `pyfiglet` libraries to present information in a visually appealing and easy-to-read format.
 - **User-Friendly:** Offers a clean interface with custom-styled text and a dynamic heading.
+- **Bounded logs:** `data_usage_log.txt` and `data_totals.txt` keep only the most recent 1000 lines, and are excluded from git via `.gitignore`.
 
 ## How to Use
 
