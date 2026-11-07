@@ -1,0 +1,7 @@
+# Runtime logs written by network_speed_monitor.py (capped at 1000 lines each)
+data_usage_log.txt
+data_totals.txt
+
+# Python
+__pycache__/
+*.py[cod]

@@ -5,6 +5,20 @@ import pyfiglet
 
 LOG_FILE = "data_usage_log.txt"
 TOTALS_FILE = "data_totals.txt"
+MAX_LOG_LINES = 1000  # Cap log files so they cannot grow without bound.
+
+
+def append_capped(path, line, max_lines=MAX_LOG_LINES):
+    """Append one line, keeping only the most recent max_lines lines."""
+    lines = []
+    if os.path.exists(path):
+        with open(path, "r") as existing_file:
+            lines = existing_file.readlines()
+    lines.append(line)
+    if len(lines) > max_lines:
+        lines = lines[-max_lines:]
+    with open(path, "w") as capped_file:
+        capped_file.writelines(lines)
 
 def get_network_stats(interval=1):
     network_stats1 = psutil.net_io_counters()
@@ -52,9 +66,8 @@ def read_last_session_totals():
     return total_upload, total_download
 
 def save_totals(total_upload, total_download):
-    with open(TOTALS_FILE, "a") as totals_file:
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-        totals_file.write(f"{timestamp} - Upload: {total_upload:.2f} MB, Download: {total_download:.2f} MB\n")
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    append_capped(TOTALS_FILE, f"{timestamp} - Upload: {total_upload:.2f} MB, Download: {total_download:.2f} MB\n")
 
 def reset_totals_if_new_day(last_reset_time, current_time):
     last_reset_date = time.strftime("%Y-%m-%d", time.localtime(last_reset_time))
@@ -67,8 +80,7 @@ def reset_totals():
 
 def save_data_usage(total_upload, total_download):
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-    with open(LOG_FILE, "a") as log_file:
-        log_file.write(f"{timestamp} - Total Upload: {total_upload:.2f} MB, Total Download: {total_download:.2f} MB\n")
+    append_capped(LOG_FILE, f"{timestamp} - Total Upload: {total_upload:.2f} MB, Total Download: {total_download:.2f} MB\n")
 
 def display_last_closed_totals():
     print("\nLast Closed Totals:")
